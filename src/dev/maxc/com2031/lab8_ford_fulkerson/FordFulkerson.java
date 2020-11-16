@@ -62,7 +62,21 @@ public class FordFulkerson {
     // Prints the minimum s-t cut, only prints the edges that are from the reachable vertex to the non-reachable vertices (the cut) as extra
     void printMinCut(int[][] rGraph, int[][] graph, int s, int t, int cut_cap) {
         System.out.println("Minimum-cut capacity is " + cut_cap + ".");
-        System.out.println("The following nodes are reachable from s: ");
+
+        int[] nodes = new int[graph.length + 1];
+        nodes = visitNode(rGraph, nodes, 0, 1);
+
+        StringBuffer joinNodeList = new StringBuffer();
+        for (int i = 0; i < nodes.length; i++) {
+            if (nodes[i] != 0) {
+                joinNodeList.append(nodes[i]);
+                if (i != nodes.length-1) {
+                    joinNodeList.append(", ");
+                }
+            }
+        }
+
+        System.out.println("The following nodes are reachable from s: " + s + ", " + joinNodeList.toString());
         System.out.println("The following edges from reachable nodes to non-reachable nodes:");
 
         boolean[] visited = new boolean[graph.length];
@@ -77,6 +91,24 @@ public class FordFulkerson {
         }
     }
 
+    int[] visitNode(int[][] graph, int[] nodes, int currentIndex, int size) {
+        for (int i = 1; i < graph[currentIndex].length; i++) {
+            if (graph[currentIndex][i] != 0 && !listContains(nodes, i)) {
+                nodes[size++] = i;
+                visitNode(graph, nodes, i, size);
+            }
+        }
+        return nodes;
+    }
+
+    static boolean listContains(int[] list, int element) {
+        for (int j : list) {
+            if (element == j) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     // Returns the maximum flow from s to t in the given graph, exactly the same as min0cut, without the printing of the edges of the cut
     int[][] fordFulkerson(int graph[][], int s, int t) {
